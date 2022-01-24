@@ -37,13 +37,13 @@ app.post('/users/add', (req, res) => {
     const pwd = req.body.pwd;
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringCheck = `SELECT * FROM Account WHERE userName = '${userName}'`; // check if the username is used
+        const stringCheck = `SELECT * FROM Accounts WHERE userName = '${userName}'`; // check if the username is used
         request.query(stringCheck, (err, response) => {
             if(err) {
                 console.log(err);
             }
             if(response.rowsAffected[0] === 0) { // check username and count the number of queries in the database
-                const stringRequest = `INSERT INTO Users.dbo.Account (userName, pwd) VALUES ('${userName}', '${pwd}')`;
+                const stringRequest = `INSERT INTO Accounts (userName, pwd) VALUES ('${userName}', '${pwd}')`;
                 request.query(stringRequest, (err, response) => {
                     if(err) {
                         console.log(err);
@@ -63,7 +63,7 @@ app.post('/users/verify', (req, res) => {
     const pwd = req.body.pwd;
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringCheck = `SELECT * FROM Account WHERE userName = '${userName}'`; // retrieve the pwd info
+        const stringCheck = `SELECT * FROM Accounts WHERE userName = '${userName}'`; // retrieve the pwd info
         request.query(stringCheck, (err, response) => {
             if(err) {
                 console.log(err);
@@ -82,18 +82,18 @@ app.post('/users/verify', (req, res) => {
 // RESTful API for login and verification.
 app.post('/users/update', (req, res) => {
     const userName = req.body.userName;
-    const oldPwd = req.body.oldPwd;
+    const pwd = req.body.pwd;
     const newPwd = req.body.newPwd;
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringCheck = `SELECT * FROM Account WHERE userName = '${userName}'`; // retrieve the pwd info
+        const stringCheck = `SELECT * FROM Accounts WHERE userName = '${userName}'`; // retrieve the pwd info
         request.query(stringCheck, (err, response) => {
             if(err) {
                 console.log(err);
             }
             // check if username exists in the database and then the password matches
-            if(response.rowsAffected[0] === 1 && response.recordsets[0][0].pwd === oldPwd) {
-                const stringUpdate = `INSERT INTO Users.dbo.Account (userName, pwd) VALUES ('${userName}', '${newPwd}')`;
+            if(response.rowsAffected[0] === 1 && response.recordsets[0][0].pwd === pwd) {
+                const stringUpdate = `INSERT INTO Accounts (userName, pwd) VALUES ('${userName}', '${newPwd}')`;
                 request.query(stringUpdate, (err, response) => {
                     if(err) {
                         console.log(err);
@@ -113,11 +113,11 @@ app.post('/users/update', (req, res) => {
 app.get('/users', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        request.query('SELECT * FROM Account', (err, recordset) => {
+        request.query('SELECT * FROM Accounts', (err, recordset) => {
             if(err) {
                 console.log(err);
             }
-            res.send(JSON.stringify(recordset));
+            res.send(JSON.stringify(recordset.recordset));
         });
     });
 });
@@ -126,7 +126,7 @@ app.get('/users', (req, res) => {
 app.get('/users/:uid/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `SELECT * FROM Account WHERE uid = ${req.params.uid}`;
+        const stringRequest = `SELECT * FROM Accounts WHERE uid = ${req.params.uid}`;
         request.query(stringRequest, function(err, recordset) {
             if(err) {
                 console.log(err);
