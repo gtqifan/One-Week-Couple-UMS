@@ -52,7 +52,7 @@ app.post('/users/add', (req, res) => {
                 });
                 res.send('success'); // return success if the new user is added to the database
             } else {
-                res.send('The username is already used.');
+                res.send('fail');
             }
         });
     });
@@ -138,3 +138,94 @@ app.get('/users/:uid/', (req, res) => {
 });
 
 // This section is for user profile operations
+
+// RESTful API for adding new user profile.
+// TODO: code needs to be refined here
+app.post('/profile/add', (req, res) => {
+    const userName = req.body.userName;
+    const image = req.body.image;
+    const name = req.body.name;
+    const gender = req.body.gender;
+    const birthday = req.body.birthday;
+    const age = req.body.age;
+    const height = req.body.height;
+    const weight = req.body.weight;
+    const location = req.body.location;
+    const school = req.body.school;
+    const grade = req.body.grade;
+    const major = req.body.major;
+    const personality = req.body.personality;
+    const hobby = req.body.hobby;
+    const wechatID = req.body.wechatID;
+    const selfDescription = req.body.selfDescription;
+    const CP_gender = req.body.CP_gender;
+    const CP_age = req.body.CP_age;
+    const CP_height = req.body.CP_height;
+    const CP_weight = req.body.CP_weight;
+    const CP_hobby = req.body.CP_hobby;
+    const CP_personality = req.body.CP_personality;
+    const CP_major = req.body.CP_major;
+    const CP_location = req.body.CP_location;
+
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `INSERT INTO Profile (userName, image, name, gender, birthday, age, height, weight, 
+                location, school, grade, major, personality, hobby, wechatID, selfDescription, CP_gender, CP_age,
+                CP_height, CP_weight, CP_hobby, CP_personality, CP_major, CP_location) VALUES ('${userName}', 
+                '${image}', '${name}', '${gender}', '${birthday}', '${age}', '${height}', '${weight}', '${location}', 
+                '${school}', '${grade}', '${major}', '${personality}', '${hobby}', '${wechatID}', '${selfDescription}', 
+                '${CP_gender}', '${CP_age}', '${CP_height}', '${CP_weight}', '${CP_hobby}', '${CP_personality}',
+                '${CP_major}', '${CP_location}')`;
+        request.query(stringRequest, (err, response) => {
+            if (err) {
+                console.log(err);
+                res.send('fail');
+            } else {
+                res.send('success'); // return success if the new user is added to the database
+            }
+        });
+    });
+});
+
+// RESTful API interface for retrieving all user profile on the server.
+// TODO: remove this function because this is only for testing
+app.get('/profile', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        request.query('SELECT * FROM Profile', (err, recordset) => {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset));
+        });
+    });
+});
+
+// RESTful API interface for retrieving one user profile info with the unique userName.
+app.get('/profile/:userName/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT * FROM Profile WHERE userName = '${req.params.userName}'`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+        });
+    });
+});
+
+// RESTful API interface for retrieving one user profile info with the unique userName.
+app.get('/profile/:userName/:category/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT ${req.params.category} FROM 
+                (SELECT * FROM Profile WHERE userName = '${req.params.userName}') AS result`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+        });
+    });
+});
