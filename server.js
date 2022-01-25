@@ -31,6 +31,7 @@ app.get('/', (req, res) => {
     });
 });
 
+// This section is for user account operations
 // RESTful API for adding new users.
 app.post('/users/add', (req, res) => {
     const userName = req.body.userName;
@@ -136,3 +137,4 @@ app.get('/users/:uid/', (req, res) => {
     });
 });
 
+// This section is for user profile operations
