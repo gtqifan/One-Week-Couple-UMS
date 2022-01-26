@@ -2,20 +2,10 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const sql = require("mssql");
+const sqlConfig = require('./sqlConfig');
 
 const app = express();
 app.use(bodyParser.json());
-
-// This is the basic authentication for MSSQL database
-const sqlConfig = {
-    user: 'foo',
-    password: 'foo', //TODO: need to be changed here
-    server: 'localhost',
-    database: 'Users',
-    options: {
-        encrypt: false
-    }
-};
 
 // The server runs on port 5000. Can be accessed with 'localhost:5000'
 const server = app.listen(5000, () => {
