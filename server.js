@@ -146,7 +146,7 @@ app.get('/users/:uid/cp/:index/', (req, res) => {
 app.post('/users/:uid/cp/:index/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringUpdate = `UPDATE Accounts SET CP_${req.params.index} = '${req.body.uid}' 
+        const stringUpdate = `UPDATE Accounts SET CP_${req.params.index} = '${req.body.userName}' 
                                 WHERE uid = '${req.params.uid}'`;
         request.query(stringUpdate, (err, response) => {
             if(err) {
