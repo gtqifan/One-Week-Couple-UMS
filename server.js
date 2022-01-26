@@ -84,7 +84,7 @@ app.post('/users/update', (req, res) => {
             }
             // check if username exists in the database and then the password matches
             if(response.rowsAffected[0] === 1 && response.recordsets[0][0].pwd === pwd) {
-                const stringUpdate = `INSERT INTO Accounts (userName, pwd) VALUES ('${userName}', '${newPwd}')`;
+                const stringUpdate = `UPDATE Accounts SET pwd = '${newPwd}' WHERE userName = '${userName}'`;
                 request.query(stringUpdate, (err, response) => {
                     if(err) {
                         console.log(err);
@@ -122,7 +122,39 @@ app.get('/users/:uid/', (req, res) => {
             if(err) {
                 console.log(err);
             }
-            res.send(JSON.stringify(recordset)); // Result in JSON format
+            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+        });
+    });
+});
+
+// RESTful API interface for retrieving CP uid that get paired.
+app.get('/users/:uid/cp/:index/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT CP_${req.params.index} FROM 
+                (SELECT * FROM Accounts WHERE uid = '${req.params.uid}') AS result`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+        });
+    });
+});
+
+// RESTful API for modifying CP uid that get paired.
+app.post('/users/:uid/cp/:index/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringUpdate = `UPDATE Accounts SET CP_${req.params.index} = '${req.body.uid}' 
+                                WHERE uid = '${req.params.uid}'`;
+        request.query(stringUpdate, (err, response) => {
+            if(err) {
+                console.log(err);
+                res.send('fail');
+            } else {
+                res.send('success');
+            }
         });
     });
 });
