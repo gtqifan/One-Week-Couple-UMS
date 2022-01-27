@@ -1,8 +1,9 @@
-const path = require("path");
-const express = require("express");
-const bodyParser = require("body-parser");
-const sql = require("mssql");
+const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const sql = require('mssql');
 const sqlConfig = require('./sqlConfig');
+const userOps = require('./userOperations');
 
 const app = express();
 app.use(bodyParser.json());
@@ -11,13 +12,13 @@ app.use(bodyParser.json());
 const server = app.listen(5000, () => {
     const port = server.address().port;
 
-    console.log("app is listening at port %s", port);
+    console.log('app is listening at port %s', port);
 });
 
 // The method for connection check. Will be implemented so that an index page will be returned.
 app.get('/', (req, res) => {
     sql.connect(sqlConfig, () => {
-        res.send("Connection established");
+        res.send('Connection established');
     });
 });
 
@@ -26,25 +27,9 @@ app.get('/', (req, res) => {
 app.post('/users/add', (req, res) => {
     const userName = req.body.userName;
     const pwd = req.body.pwd;
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        const stringCheck = `SELECT * FROM Accounts WHERE userName = '${userName}'`; // check if the username is used
-        request.query(stringCheck, (err, response) => {
-            if(err) {
-                console.log(err);
-            }
-            if(response.rowsAffected[0] === 0) { // check username and count the number of queries in the database
-                const stringRequest = `INSERT INTO Accounts (userName, pwd) VALUES ('${userName}', '${pwd}')`;
-                request.query(stringRequest, (err, response) => {
-                    if(err) {
-                        console.log(err);
-                    }
-                });
-                res.send('success'); // return success if the new user is added to the database
-            } else {
-                res.send('fail');
-            }
-        });
+
+    userOps.addUser(userName, pwd).then(result => {
+        res.send(result);
     });
 });
 
@@ -114,6 +99,7 @@ app.get('/users', (req, res) => {
 });
 
 // RESTful API interface for retrieving one user account info with the unique uid.
+// TODO: remove this function because this is only for testing
 app.get('/users/:uid/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
