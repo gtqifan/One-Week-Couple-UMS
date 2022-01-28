@@ -2,11 +2,13 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const sql = require('mssql');
+const cors = require('cors');
 const sqlConfig = require('./sqlConfig');
 const userOps = require('./userOperations');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(bodyParser.json())
+app.use(cors()); // Fix the error of additional header caused the server to throw CORS exceptions
 
 // The server runs on port 5000. Can be accessed with 'localhost:5000'
 const server = app.listen(5000, () => {
