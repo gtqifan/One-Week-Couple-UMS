@@ -2,13 +2,13 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const sql = require('mssql');
-const cors = require('cors');
+// const cors = require('cors');
 const sqlConfig = require('./sqlConfig');
 const userOps = require('./userOperations');
 
 const app = express();
 app.use(bodyParser.json())
-app.use(cors()); // Fix the error of additional header caused the server to throw CORS exceptions
+// app.use(cors()); // Fix the error of additional header caused the server to throw CORS exceptions
 
 // The server runs on port 5000. Can be accessed with 'localhost:5000'
 const server = app.listen(5000, () => {
@@ -167,25 +167,31 @@ app.post('/profile/add', (req, res) => {
     const personality = req.body.personality;
     const hobby = req.body.hobby;
     const wechatID = req.body.wechatID;
+    const hobbyDescription = req.body.hobbyDescription;
     const selfDescription = req.body.selfDescription;
     const CP_gender = req.body.CP_gender;
-    const CP_age = req.body.CP_age;
-    const CP_height = req.body.CP_height;
-    const CP_weight = req.body.CP_weight;
+    const CP_age_min = req.body.CP_age_min;
+    const CP_age_max = req.body.CP_age_max;
+    const CP_height_min = req.body.CP_height_min;
+    const CP_height_max = req.body.CP_height_max;
+    const CP_weight_min = req.body.CP_weight_min;
+    const CP_weight_max = req.body.CP_weight_max;
     const CP_hobby = req.body.CP_hobby;
     const CP_personality = req.body.CP_personality;
-    const CP_major = req.body.CP_major;
-    const CP_location = req.body.CP_location;
+    const topMatches = req.body.topMatches;
+    const CP = req.body.CP;
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `INSERT INTO Profile (userName, image, name, gender, birthday, age, height, weight, 
-                location, school, grade, major, personality, hobby, wechatID, selfDescription, CP_gender, CP_age,
-                CP_height, CP_weight, CP_hobby, CP_personality, CP_major, CP_location) VALUES ('${userName}', 
+                location, school, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
+                CP_gender, CP_age_min, CP_age_max, CP_height_min,
+                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, CP) VALUES ('${userName}', 
                 '${image}', '${name}', '${gender}', '${birthday}', '${age}', '${height}', '${weight}', '${location}', 
-                '${school}', '${grade}', '${major}', '${personality}', '${hobby}', '${wechatID}', '${selfDescription}', 
-                '${CP_gender}', '${CP_age}', '${CP_height}', '${CP_weight}', '${CP_hobby}', '${CP_personality}',
-                '${CP_major}', '${CP_location}')`;
+                '${school}', '${grade}', '${major}', '${personality}', '${hobby}', '${wechatID}', '${hobbyDescription}','${selfDescription}', 
+                '${CP_gender}', '${CP_age_min}', '${CP_age_max}', '${CP_height_min}', '${CP_height_max}', '${CP_weight_min}',
+                 '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${CP}')`;
+        console.log(stringRequest);
         request.query(stringRequest, (err, response) => {
             if (err) {
                 console.log(err);
