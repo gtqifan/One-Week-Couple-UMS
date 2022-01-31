@@ -10,6 +10,17 @@ const app = express();
 app.use(bodyParser.json())
 // app.use(cors()); // Fix the error of additional header caused the server to throw CORS exceptions
 
+app.options('/', (req, res) => {
+//express框架有res.set()和res.header()两种方式设置header，没有setHeader方法。
+    res.set({
+        "Access-Control-Allow-Origin": "*",
+    });
+    const obj = {
+        "msg": "options request"
+    }
+    res.send(obj)
+})
+
 // The server runs on port 5000. Can be accessed with 'localhost:5000'
 const server = app.listen(5000, () => {
     const port = server.address().port;
