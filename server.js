@@ -10,16 +10,25 @@ const app = express();
 app.use(bodyParser.json())
 // app.use(cors()); // Fix the error of additional header caused the server to throw CORS exceptions
 
-app.options('/', (req, res) => {
-//express框架有res.set()和res.header()两种方式设置header，没有setHeader方法。
-    res.set({
-        "Access-Control-Allow-Origin": "*",
-    });
-    const obj = {
-        "msg": "options request"
-    }
-    res.send(obj)
-})
+// Add headers before the routes are defined
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5000');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
 
 // The server runs on port 5000. Can be accessed with 'localhost:5000'
 const server = app.listen(5000, () => {
