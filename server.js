@@ -12,10 +12,10 @@ app.use(bodyParser.json())
 
 // Setup return header
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5000');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, cache-control, Access-Control-Request-Method, Access-Control-Request-Headers");
     next();
 });
 
@@ -166,7 +166,6 @@ app.post('/profile/add', (req, res) => {
     const name = req.body.name;
     const gender = req.body.gender;
     const birthday = req.body.birthday;
-    const age = req.body.age;
     const height = req.body.height;
     const weight = req.body.weight;
     const location = req.body.location;
@@ -192,11 +191,11 @@ app.post('/profile/add', (req, res) => {
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `INSERT INTO Profile (userName, image, name, gender, birthday, age, height, weight, 
+        const stringRequest = `INSERT INTO Profile (image, name, gender, birthday, height, weight, 
                 location, school, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
                 CP_gender, CP_age_min, CP_age_max, CP_height_min,
-                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, CP) VALUES ('${userName}', 
-                '${image}', '${name}', '${gender}', '${birthday}', '${age}', '${height}', '${weight}', '${location}', 
+                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, CP) VALUES (
+                '${image}', '${name}', '${gender}', '${birthday}', '${height}', '${weight}', '${location}', 
                 '${school}', '${grade}', '${major}', '${personality}', '${hobby}', '${wechatID}', '${hobbyDescription}','${selfDescription}', 
                 '${CP_gender}', '${CP_age_min}', '${CP_age_max}', '${CP_height_min}', '${CP_height_max}', '${CP_weight_min}',
                  '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${CP}')`;
