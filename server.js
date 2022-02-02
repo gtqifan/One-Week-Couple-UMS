@@ -377,8 +377,19 @@ app.post('/message/allInvitation/', (req, res) => {
             });
             // Retrieve profile information from Profile table where the email addresses are in the resultArray
             // We need to return image, gender, grade, major, hobby, personality
-
-            res.send(Array.from(resultSet));
+            let profileSet = new Set();
+            resultSet.forEach(email => {
+                // console.log(email);
+                const emailRequest = `SELECT name, image, gender, grade, major, hobby, personality FROM Profile
+                    WHERE email = '${email}'`;
+                request.query(emailRequest, function (err, recordset) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    profileSet.add(JSON.stringify(recordset.recordset));
+                });
+            });
+            res.send(Array.from(profileSet));
         });
     });
 });
