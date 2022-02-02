@@ -255,8 +255,8 @@ app.get('/profile/allInfo/', (req, res) => {
 app.get('/profile/category/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `SELECT ${req.params.category} FROM 
-                (SELECT * FROM Profile WHERE email = '${req.params.email}') AS result`;
+        const stringRequest = `SELECT ${req.body.category} FROM 
+                (SELECT * FROM Profile WHERE email = '${req.body.email}') AS result`;
         request.query(stringRequest, function (err, recordset) {
             if (err) {
                 console.log(err);
