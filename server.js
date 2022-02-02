@@ -304,3 +304,17 @@ app.get('/profile/update', (req, res) => {
         });
     });
 });
+
+// RESTful API interface for retrieving all message on the server.
+// TODO: remove this function because this is only for testing
+app.get('/message', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        request.query('SELECT * FROM Message', (err, recordset) => {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset));
+        });
+    });
+});
