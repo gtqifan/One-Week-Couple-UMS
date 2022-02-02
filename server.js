@@ -376,6 +376,7 @@ app.post('/message/allInvitation/', (req, res) => {
                 resultSet.add(element['fromEmail']);
             });
             // Retrieve profile information from Profile table where the email addresses are in the resultArray
+            // We need to return image, gender, grade, major, hobby, personality
 
             res.send(Array.from(resultSet));
         });
