@@ -188,24 +188,36 @@ app.post('/profile/add', (req, res) => {
     const CP_personality = req.body.CP_personality;
     const topMatches = req.body.topMatches;
     const CP = req.body.CP;
+    const email = req.body.email;
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `INSERT INTO Profile (image, name, gender, birthday, height, weight, 
+        const stringCheck = `SELECT * FROM Profile WHERE email = '${email}'`; // retrieve the pwd info
+        request.query(stringCheck, (err, response) => {
+            if(err) {
+                console.log(err);
+            }
+            // check if username exists in the database and then the password matches
+            if(response.rowsAffected[0] === 0) {
+                const stringRequest = `INSERT INTO Profile (image, name, gender, birthday, height, weight, 
                 location, school, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
                 CP_gender, CP_age_min, CP_age_max, CP_height_min,
-                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, CP) VALUES (
+                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, CP, email) VALUES (
                 '${image}', '${name}', '${gender}', '${birthday}', '${height}', '${weight}', '${location}', 
                 '${school}', '${grade}', '${major}', '${personality}', '${hobby}', '${wechatID}', '${hobbyDescription}','${selfDescription}', 
                 '${CP_gender}', '${CP_age_min}', '${CP_age_max}', '${CP_height_min}', '${CP_height_max}', '${CP_weight_min}',
-                 '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${CP}')`;
-        console.log(stringRequest);
-        request.query(stringRequest, (err, response) => {
-            if (err) {
-                console.log(err);
-                res.send('fail');
+                 '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${CP}', '${email}')`;
+                console.log(stringRequest);
+                request.query(stringRequest, (err, response) => {
+                    if (err) {
+                        console.log(err);
+                        res.send('fail');
+                    } else {
+                        res.send('success'); // return success if the new user is added to the database
+                    }
+                });
             } else {
-                res.send('success'); // return success if the new user is added to the database
+                res.send('fail');
             }
         });
     });
