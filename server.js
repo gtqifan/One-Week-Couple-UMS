@@ -367,29 +367,31 @@ app.post('/message/allInvitation/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `SELECT fromEmail FROM Message WHERE (sendTo = '${req.body.email}' AND type = 2)`;
+        let resultSet = new Set();
         request.query(stringRequest, function (err, recordset) {
             if (err) {
                 console.log(err);
             }
-            let resultSet = new Set();
             recordset.recordset.forEach(element => {
                 resultSet.add(element['fromEmail']);
             });
+
             // Retrieve profile information from Profile table where the email addresses are in the resultArray
             // We need to return image, gender, grade, major, hobby, personality
             let profileSet = new Set();
             resultSet.forEach(email => {
-                // console.log(email);
                 const emailRequest = `SELECT name, image, gender, grade, major, hobby, personality FROM Profile
                     WHERE email = '${email}'`;
                 request.query(emailRequest, function (err, recordset) {
                     if (err) {
                         console.log(err);
                     }
-                    profileSet.add(JSON.stringify(recordset.recordset));
+                    recordset.recordset.forEach(element => {
+                        profileSet.add(element);
+                    });
+                    res.send(Array.from(profileSet));
                 });
             });
-            res.send(Array.from(profileSet));
         });
     });
 });
