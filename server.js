@@ -327,19 +327,47 @@ app.post('/message/add', (req, res) => {
     const isGlobal = req.body.isGlobal;
     const data = req.body.data;
     const type = req.body.type;
-    const from = req.body.from;
+    const fromEmail = req.body.fromEmail;
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `INSERT INTO Message (sendTo, isGlobal, data, type, from) VALUES (
-            '${sendTo}', '${isGlobal}', '${data}', '${type}', '${from}')`;
-        request.query(stringCheck, (err, response) => {
+            '${sendTo}', '${isGlobal}', '${data}', '${type}', '${fromEmail}')`;
+        request.query(stringRequest, (err, response) => {
             if(err) {
                 console.log(err);
                 res.send('fail');
             } else {
                 res.send('success');
             }
+        });
+    });
+});
+
+// RESTful API interface for retrieving messages for one user with the unique email.
+app.post('/message/allMessage/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT data FROM Message WHERE sendTo = '${req.body.email}' AND type = '1'`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+        });
+    });
+});
+
+// RESTful API interface for retrieving messages for one user with the unique email.
+app.post('/message/allInvitation/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT from FROM Message WHERE sendTo = '${req.body.email}' AND type = '2'`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
         });
     });
 });
