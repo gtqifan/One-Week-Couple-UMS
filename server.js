@@ -287,6 +287,7 @@ app.post('/profile/verify/', (req, res) => {
     });
 });
 
+// RESTful API interface for updating one category of a user's profile.
 app.get('/profile/update', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
@@ -297,6 +298,30 @@ app.get('/profile/update', (req, res) => {
                 console.log(err);
             }
             if(response.rowsAffected[0] === 0) {
+                res.send('fail');
+            } else {
+                res.send('success');
+            }
+        });
+    });
+});
+
+// This section is for message operations
+// RESTful API for adding new message profile.
+app.post('/message/add', (req, res) => {
+    const sendTo = req.body.sendTo;
+    const isGlobal = req.body.isGlobal;
+    const data = req.body.data;
+    const type = req.body.type;
+    const from = req.body.from;
+
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `INSERT INTO Message (sendTo, isGlobal, data, type, from) VALUES (
+            '${sendTo}', '${isGlobal}', '${data}', '${type}', '${from}')`;
+        request.query(stringCheck, (err, response) => {
+            if(err) {
+                console.log(err);
                 res.send('fail');
             } else {
                 res.send('success');
