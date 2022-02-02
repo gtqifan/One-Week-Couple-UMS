@@ -275,7 +275,6 @@ app.get('/profile/verify/', (req, res) => {
             if (err) {
                 console.log(err);
             }
-            console.log(response);
 
             // check if username exists in the database and then the password matches
             if(response.rowsAffected[0] === 1) {
