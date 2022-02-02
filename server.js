@@ -286,3 +286,21 @@ app.get('/profile/verify/', (req, res) => {
         });
     });
 });
+
+app.get('/profile/update', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `UPDATE Profile SET ${req.body.category} = '${req.body.value}'
+            where email = '${req.body.email}'`;
+        request.query(stringRequest, function (err, response) {
+            if (err) {
+                console.log(err);
+            }
+            if(response.rowsAffected[0] === 0) {
+                res.send('fail');
+            } else {
+                res.send('success');
+            }
+        });
+    });
+});
