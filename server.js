@@ -237,7 +237,7 @@ app.get('/profile', (req, res) => {
 });
 
 // RESTful API interface for retrieving one user profile info with the unique email.
-app.get('/profile/allInfo/', (req, res) => {
+app.post('/profile/allInfo/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `SELECT * FROM Profile WHERE email = '${req.body.email}'`;
@@ -251,7 +251,7 @@ app.get('/profile/allInfo/', (req, res) => {
 });
 
 // RESTful API interface for retrieving one user profile info with the unique email.
-app.get('/profile/category/', (req, res) => {
+app.post('/profile/category/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `SELECT ${req.body.category} FROM 
@@ -267,7 +267,7 @@ app.get('/profile/category/', (req, res) => {
 
 
 // RESTful API interface for checking if an email address has been registered with the unique email.
-app.get('/profile/verify/', (req, res) => {
+app.post('/profile/verify/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `SELECT * FROM Profile WHERE email = '${req.body.email}'`;
