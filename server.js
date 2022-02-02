@@ -306,6 +306,7 @@ app.get('/profile/update', (req, res) => {
     });
 });
 
+<<<<<<< HEAD
 // This section is for message operations
 // RESTful API for adding new message profile.
 app.post('/message/add', (req, res) => {
@@ -329,3 +330,18 @@ app.post('/message/add', (req, res) => {
         });
     });
 });
+=======
+// RESTful API interface for retrieving all message on the server.
+// TODO: remove this function because this is only for testing
+app.get('/message', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        request.query('SELECT * FROM Message', (err, recordset) => {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset));
+        });
+    });
+});
+>>>>>>> ddf0f82c8a36b229894327bc705214aff9949485
