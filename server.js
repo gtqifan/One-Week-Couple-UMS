@@ -237,11 +237,11 @@ app.get('/profile', (req, res) => {
     });
 });
 
-// RESTful API interface for retrieving one user profile info with the unique userName.
-app.get('/profile/:userName/', (req, res) => {
+// RESTful API interface for retrieving one user profile info with the unique email.
+app.get('/profile/allInfo/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `SELECT * FROM Profile WHERE userName = '${req.params.userName}'`;
+        const stringRequest = `SELECT * FROM Profile WHERE email = '${req.body.email}'`;
         request.query(stringRequest, function (err, recordset) {
             if (err) {
                 console.log(err);
@@ -252,11 +252,11 @@ app.get('/profile/:userName/', (req, res) => {
 });
 
 // RESTful API interface for retrieving one user profile info with the unique userName.
-app.get('/profile/:userName/:category/', (req, res) => {
+app.get('/profile/category/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `SELECT ${req.params.category} FROM 
-                (SELECT * FROM Profile WHERE userName = '${req.params.userName}') AS result`;
+                (SELECT * FROM Profile WHERE email = '${req.params.email}') AS result`;
         request.query(stringRequest, function (err, recordset) {
             if (err) {
                 console.log(err);
