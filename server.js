@@ -33,131 +33,130 @@ app.get('/', (req, res) => {
     });
 });
 
-// This section is for user account operations
-// RESTful API for adding new users.
-app.post('/users/add', (req, res) => {
-    const userName = req.body.userName;
-    const pwd = req.body.pwd;
-
-    userOps.addUser(userName, pwd).then(result => {
-        res.send(result);
-    });
-});
-
-// RESTful API for login and verification.
-app.post('/users/verify', (req, res) => {
-    const userName = req.body.userName;
-    const pwd = req.body.pwd;
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        const stringCheck = `SELECT * FROM Accounts WHERE userName = '${userName}'`; // retrieve the pwd info
-        request.query(stringCheck, (err, response) => {
-            if(err) {
-                console.log(err);
-            }
-            // check if username exists in the database and then the password matches
-            if(response.rowsAffected[0] === 1 && response.recordsets[0][0].pwd === pwd) {
-                if(response.recordsets)
-                res.send('success'); // return success if the new user is added to the database
-            } else {
-                res.send('fail');
-            }
-        });
-    });
-});
-
-// RESTful API for login and verification.
-app.post('/users/update', (req, res) => {
-    const userName = req.body.userName;
-    const pwd = req.body.pwd;
-    const newPwd = req.body.newPwd;
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        const stringCheck = `SELECT * FROM Accounts WHERE userName = '${userName}'`; // retrieve the pwd info
-        request.query(stringCheck, (err, response) => {
-            if(err) {
-                console.log(err);
-            }
-            // check if username exists in the database and then the password matches
-            if(response.rowsAffected[0] === 1 && response.recordsets[0][0].pwd === pwd) {
-                const stringUpdate = `UPDATE Accounts SET pwd = '${newPwd}' WHERE userName = '${userName}'`;
-                request.query(stringUpdate, (err, response) => {
-                    if(err) {
-                        console.log(err);
-                    }
-                });
-                res.send('success');
-            } else {
-                res.send('fail');
-            }
-        });
-    });
-});
-
-// RESTful API interface for retrieving all username and password on the server. Will be modified so that it will
-// only return a boolean indicating the correctness of account info.
-// TODO: remove this function because this is only for testing
-app.get('/users', (req, res) => {
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        request.query('SELECT * FROM Accounts', (err, recordset) => {
-            if(err) {
-                console.log(err);
-            }
-            res.send(JSON.stringify(recordset.recordset));
-        });
-    });
-});
-
-// RESTful API interface for retrieving one user account info with the unique uid.
-// TODO: remove this function because this is only for testing
-app.get('/users/:uid/', (req, res) => {
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        const stringRequest = `SELECT * FROM Accounts WHERE uid = ${req.params.uid}`;
-        request.query(stringRequest, function(err, recordset) {
-            if(err) {
-                console.log(err);
-            }
-            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
-        });
-    });
-});
-
-// RESTful API interface for retrieving CP uid that get paired.
-app.get('/users/:uid/cp/:index/', (req, res) => {
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        const stringRequest = `SELECT CP_${req.params.index} FROM 
-                (SELECT * FROM Accounts WHERE uid = '${req.params.uid}') AS result`;
-        request.query(stringRequest, function (err, recordset) {
-            if (err) {
-                console.log(err);
-            }
-            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
-        });
-    });
-});
-
-// RESTful API for modifying CP uid that get paired.
-app.post('/users/:uid/cp/:index/', (req, res) => {
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        const stringUpdate = `UPDATE Accounts SET CP_${req.params.index} = '${req.body.userName}' 
-                                WHERE uid = '${req.params.uid}'`;
-        request.query(stringUpdate, (err, response) => {
-            if(err) {
-                console.log(err);
-                res.send('fail');
-            } else {
-                res.send('success');
-            }
-        });
-    });
-});
+// // This section is for user account operations
+// // RESTful API for adding new users.
+// app.post('/users/add', (req, res) => {
+//     const userName = req.body.userName;
+//     const pwd = req.body.pwd;
+//
+//     userOps.addUser(userName, pwd).then(result => {
+//         res.send(result);
+//     });
+// });
+//
+// // RESTful API for login and verification.
+// app.post('/users/verify', (req, res) => {
+//     const userName = req.body.userName;
+//     const pwd = req.body.pwd;
+//     sql.connect(sqlConfig, () => {
+//         const request = new sql.Request();
+//         const stringCheck = `SELECT * FROM Accounts WHERE userName = '${userName}'`; // retrieve the pwd info
+//         request.query(stringCheck, (err, response) => {
+//             if(err) {
+//                 console.log(err);
+//             }
+//             // check if username exists in the database and then the password matches
+//             if(response.rowsAffected[0] === 1 && response.recordsets[0][0].pwd === pwd) {
+//                 if(response.recordsets)
+//                 res.send('success'); // return success if the new user is added to the database
+//             } else {
+//                 res.send('fail');
+//             }
+//         });
+//     });
+// });
+//
+// // RESTful API for login and verification.
+// app.post('/users/update', (req, res) => {
+//     const userName = req.body.userName;
+//     const pwd = req.body.pwd;
+//     const newPwd = req.body.newPwd;
+//     sql.connect(sqlConfig, () => {
+//         const request = new sql.Request();
+//         const stringCheck = `SELECT * FROM Accounts WHERE userName = '${userName}'`; // retrieve the pwd info
+//         request.query(stringCheck, (err, response) => {
+//             if(err) {
+//                 console.log(err);
+//             }
+//             // check if username exists in the database and then the password matches
+//             if(response.rowsAffected[0] === 1 && response.recordsets[0][0].pwd === pwd) {
+//                 const stringUpdate = `UPDATE Accounts SET pwd = '${newPwd}' WHERE userName = '${userName}'`;
+//                 request.query(stringUpdate, (err, response) => {
+//                     if(err) {
+//                         console.log(err);
+//                     }
+//                 });
+//                 res.send('success');
+//             } else {
+//                 res.send('fail');
+//             }
+//         });
+//     });
+// });
+//
+// // RESTful API interface for retrieving all username and password on the server. Will be modified so that it will
+// // only return a boolean indicating the correctness of account info.
+// // TODO: remove this function because this is only for testing
+// app.get('/users', (req, res) => {
+//     sql.connect(sqlConfig, () => {
+//         const request = new sql.Request();
+//         request.query('SELECT * FROM Accounts', (err, recordset) => {
+//             if(err) {
+//                 console.log(err);
+//             }
+//             res.send(JSON.stringify(recordset.recordset));
+//         });
+//     });
+// });
+//
+// // RESTful API interface for retrieving one user account info with the unique uid.
+// // TODO: remove this function because this is only for testing
+// app.get('/users/:uid/', (req, res) => {
+//     sql.connect(sqlConfig, () => {
+//         const request = new sql.Request();
+//         const stringRequest = `SELECT * FROM Accounts WHERE uid = ${req.params.uid}`;
+//         request.query(stringRequest, function(err, recordset) {
+//             if(err) {
+//                 console.log(err);
+//             }
+//             res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+//         });
+//     });
+// });
+//
+// // RESTful API interface for retrieving CP uid that get paired.
+// app.get('/users/:uid/cp/:index/', (req, res) => {
+//     sql.connect(sqlConfig, () => {
+//         const request = new sql.Request();
+//         const stringRequest = `SELECT CP_${req.params.index} FROM
+//                 (SELECT * FROM Accounts WHERE uid = '${req.params.uid}') AS result`;
+//         request.query(stringRequest, function (err, recordset) {
+//             if (err) {
+//                 console.log(err);
+//             }
+//             res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+//         });
+//     });
+// });
+//
+// // RESTful API for modifying CP uid that get paired.
+// app.post('/users/:uid/cp/:index/', (req, res) => {
+//     sql.connect(sqlConfig, () => {
+//         const request = new sql.Request();
+//         const stringUpdate = `UPDATE Accounts SET CP_${req.params.index} = '${req.body.userName}'
+//                                 WHERE uid = '${req.params.uid}'`;
+//         request.query(stringUpdate, (err, response) => {
+//             if(err) {
+//                 console.log(err);
+//                 res.send('fail');
+//             } else {
+//                 res.send('success');
+//             }
+//         });
+//     });
+// });
 
 // This section is for user profile operations
-
 // RESTful API for adding new user profile.
 // TODO: code needs to be refined here
 app.post('/profile/add', (req, res) => {
@@ -251,7 +250,7 @@ app.get('/profile/allInfo/', (req, res) => {
     });
 });
 
-// RESTful API interface for retrieving one user profile info with the unique userName.
+// RESTful API interface for retrieving one user profile info with the unique email.
 app.get('/profile/category/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
@@ -262,6 +261,29 @@ app.get('/profile/category/', (req, res) => {
                 console.log(err);
             }
             res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+        });
+    });
+});
+
+
+// RESTful API interface for checking if an email address has been registered with the unique email.
+app.get('/profile/verify/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT * FROM Profile WHERE email = '${req.body.email}'`;
+        request.query(stringRequest, function (err, response) {
+            if (err) {
+                console.log(err);
+            }
+            console.log(response);
+
+            // check if username exists in the database and then the password matches
+            if(response.rowsAffected[0] === 1) {
+                if(response.recordsets)
+                res.send('exist'); // return success if the new user is added to the database
+            } else {
+                res.send('not-exist');
+            }
         });
     });
 });
