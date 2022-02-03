@@ -369,7 +369,8 @@ app.post('/message/allMessage/', (req, res) => {
 app.post('/message/allInvitation/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `SELECT fromEmail FROM Message WHERE (sendTo = '${req.body.email}' AND type = 2)`;
+        const stringRequest = `SELECT fromEmail FROM Message WHERE (sendTo = '${req.body.email}' AND type = 2 
+                AND status = 0)`;
         let resultSet = new Set();
         request.query(stringRequest, function (err, recordset) {
             if (err) {
