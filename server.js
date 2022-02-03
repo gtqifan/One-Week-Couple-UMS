@@ -399,3 +399,41 @@ app.post('/message/allInvitation/', (req, res) => {
         });
     });
 });
+
+//RESTful API interface for accepting invitation
+app.get('/message/Invitaion/Accept', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `UPDATE Message SET status = 1
+            where sendTo = '${req.body.sendTo}' and fromEmail = '${req.body.fromEmail}'`;
+        request.query(stringRequest, function (err, response) {
+            if (err) {
+                console.log(err);
+            }
+            if(response.rowsAffected[0] === 0) {
+                res.send('fail');
+            } else {
+                res.send('success');
+            }
+        });
+    });
+});
+
+//RESTful API interface for rejecting invitation
+app.get('/message/Invitaion/Reject', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `UPDATE Message SET status = 2
+            where sendTo = '${req.body.sendTo}' and fromEmail = '${req.body.fromEmail}'`;
+        request.query(stringRequest, function (err, response) {
+            if (err) {
+                console.log(err);
+            }
+            if(response.rowsAffected[0] === 0) {
+                res.send('fail');
+            } else {
+                res.send('success');
+            }
+        });
+    });
+});
