@@ -306,6 +306,8 @@ app.get('/profile/update', (req, res) => {
     });
 });
 
+// Below are the methods for message table.
+
 // RESTful API interface for retrieving all message on the server.
 // TODO: remove this function because this is only for testing
 app.get('/message', (req, res) => {
@@ -328,11 +330,12 @@ app.post('/message/add', (req, res) => {
     const data = req.body.data;
     const type = req.body.type;
     const fromEmail = req.body.fromEmail;
+    const status = req.body.status;
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `INSERT INTO Message (sendTo, isGlobal, data, type, from) VALUES (
-            '${sendTo}', '${isGlobal}', '${data}', '${type}', '${fromEmail}')`;
+        const stringRequest = `INSERT INTO Message (sendTo, isGlobal, data, type, fromEmail, status) VALUES (
+            '${sendTo}', '${isGlobal}', '${data}', '${type}', '${fromEmail}', '${status}')`;
         request.query(stringRequest, (err, response) => {
             if(err) {
                 console.log(err);
