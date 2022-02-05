@@ -393,6 +393,8 @@ app.post('/message/allInvitation/', (req, res) => {
                     recordset.recordset.forEach(element => {
                         profileSet.add(element);
                     });
+                    // This step ensures that all entries in the resultSet are added to the profile set
+                    // TODO: use async function later, but not our priority
                    if (resultSet.size === profileSet.size) {
                        res.send(Array.from(profileSet));
                    }
