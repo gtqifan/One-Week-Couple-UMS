@@ -393,7 +393,9 @@ app.post('/message/allInvitation/', (req, res) => {
                     recordset.recordset.forEach(element => {
                         profileSet.add(element);
                     });
-                    res.send(Array.from(profileSet));
+                   if (resultSet.size === profileSet.size) {
+                       res.send(Array.from(profileSet));
+                   }
                 });
             });
         });
