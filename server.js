@@ -419,7 +419,7 @@ app.post('/message/invitation/accept', (req, res) => {
                 res.send('fail');
             } else {
                 const updateRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.fromEmail}',
-                    '${req.body.toEmail}'`;
+                    '${req.body.toEmail}')`;
                 request.query(updateRequest, function (err, response) {
                     if (err) {
                         console.log(err);
