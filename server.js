@@ -351,16 +351,18 @@ app.post('/message/add', (req, res) => {
 app.post('/message/allMessage/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `SELECT data FROM Message WHERE ((sendTo = '${req.body.email}' AND type = 1) OR isGlobal = 1)`;
+        const stringRequest = `SELECT data, fromEmail FROM Message WHERE ((sendTo = '${req.body.email}' AND type = 1) OR isGlobal = 1)`;
         request.query(stringRequest, function (err, recordset) {
             if (err) {
                 console.log(err);
             }
             let resultSet = new Set();
             recordset.recordset.forEach(element => {
-                resultSet.add(element['data']);
+                const elementResult = {"messageData": element['data']};
+                resultSet.add(elementResult);
             });
             res.send(Array.from(resultSet));
+            //Array.from(resultSet))
         });
     });
 });
@@ -379,11 +381,13 @@ app.post('/message/allInvitation/', (req, res) => {
             recordset.recordset.forEach(element => {
                 resultSet.add(element['fromEmail']);
             });
+            console.log(resultSet);
 
             // Retrieve profile information from Profile table where the email addresses are in the resultArray
             // We need to return image, gender, grade, major, hobby, personality
             let profileSet = new Set();
             resultSet.forEach(email => {
+                console.log(email);
                 const emailRequest = `SELECT name, image, gender, grade, major, hobby, personality FROM Profile
                     WHERE email = '${email}'`;
                 request.query(emailRequest, function (err, recordset) {
