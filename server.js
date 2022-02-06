@@ -334,7 +334,7 @@ app.post('/message/add', (req, res) => {
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const checkExist = `SELECT sendTo, fromEmail from Message where sendTo = '${sendTo}' and fromEmail = '${fromEmail}`;
+        const checkExist = `SELECT sendTo, fromEmail from Message where sendTo = '${sendTo}' and fromEmail = '${fromEmail}'`;
         request.query(checkExist, (err, response) => {
             if(err) {
                 console.log(err);
