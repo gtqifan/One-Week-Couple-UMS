@@ -188,6 +188,7 @@ app.post('/profile/add', (req, res) => {
     const topMatches = req.body.topMatches;
     const CP = req.body.CP;
     const email = req.body.email;
+    const token = req.body.token;
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
@@ -201,11 +202,11 @@ app.post('/profile/add', (req, res) => {
                 const stringRequest = `INSERT INTO Profile (image, name, gender, birthday, height, weight, 
                 location, school, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
                 CP_gender, CP_age_min, CP_age_max, CP_height_min,
-                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, CP, email) VALUES (
+                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, CP, email, token) VALUES (
                 '${image}', '${name}', '${gender}', '${birthday}', '${height}', '${weight}', '${location}', 
                 '${school}', '${grade}', '${major}', '${personality}', '${hobby}', '${wechatID}', '${hobbyDescription}','${selfDescription}', 
                 '${CP_gender}', '${CP_age_min}', '${CP_age_max}', '${CP_height_min}', '${CP_height_max}', '${CP_weight_min}',
-                 '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${CP}', '${email}')`;
+                 '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${CP}', '${email}', '${token}')`;
                 console.log(stringRequest);
                 request.query(stringRequest, (err, response) => {
                     if (err) {
