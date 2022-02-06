@@ -465,6 +465,7 @@ app.post('/message/invitation/reject', (req, res) => {
 });
 
 // Task section
+
 // RESTful API interface for retrieving all tasks on the server.
 // TODO: remove this function because this is only for testing
 app.get('/task', (req, res) => {
@@ -478,3 +479,50 @@ app.get('/task', (req, res) => {
         });
     });
 });
+
+// RESTful API interface for creating a task entry for two users..
+app.post('/task/add/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.email1}', 
+                '${req.body.email2}')`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+                res.send('fail');
+            }
+            res.send('success');
+        });
+    });
+});
+
+// RESTful API interface for retrieving one user's tasks info with the unique email.
+app.post('/task/allTask/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT * FROM Task WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+        });
+    });
+});
+
+// RESTful API interface for updating a task status to complete.
+app.post('/task/complete/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `UPDATE Task SET T${req.body.taskIndex}_status = 1, T${req.body.taskIndex}_content = ${req.body.content}
+            WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+                res.send('fail');
+            }
+            res.send('success');
+        });
+    });
+});
+
