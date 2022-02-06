@@ -527,3 +527,24 @@ app.post('/task/complete/', (req, res) => {
     });
 });
 
+// RESTful API interface for checking if an email address has been registered with the unique email.
+app.post('/task/lookup/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT * FROM Task WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
+        request.query(stringRequest, function (err, response) {
+            if (err) {
+                console.log(err);
+            }
+
+            // check if username exists in the database and then the password matches
+            if(response.rowsAffected[0] === 1) {
+                if(response.recordsets)
+                    res.send('exist'); // return success if the new user is added to the database
+            } else {
+                res.send('not-exist');
+            }
+        });
+    });
+});
+
