@@ -359,9 +359,8 @@ app.post('/message/allMessage/', (req, res) => {
             }
             let resultSet = new Set();
             recordset.recordset.forEach(element => {
-                const elementResult = {"fromEmail": element['fromEmail'], "data": element['data']};
-                //console.log(JSON.stringify(element));
-                resultSet.add(elementResult);
+                //const elementResult = {"fromEmail": element['fromEmail'], "data": element['data']};
+                resultSet.add(element);
             });
             res.send(Array.from(resultSet));
         });
