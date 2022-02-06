@@ -527,7 +527,7 @@ app.post('/task/complete/', (req, res) => {
     });
 });
 
-// RESTful API interface for checking if an email address has been registered with the unique email.
+// RESTful API interface for checking if a user has a paired CP.
 app.post('/task/lookup/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
@@ -544,6 +544,23 @@ app.post('/task/lookup/', (req, res) => {
             } else {
                 res.send('not-exist');
             }
+        });
+    });
+});
+
+// RESTful API interface for counting finished number.
+app.post('/task/count/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT * FROM Task WHERE T${req.body.taskIndex}_status = 1`;
+        request.query(stringRequest, function (err, response) {
+            if (err) {
+                console.log(err);
+                res.send('fail');
+            }
+
+            // return the number of pairs that completed a specific tasks
+            res.send(response.rowsAffected[0]);
         });
     });
 });
