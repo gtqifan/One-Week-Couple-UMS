@@ -417,7 +417,18 @@ app.post('/message/Invitaion/Accept', (req, res) => {
             if(response.rowsAffected[0] === 0) {
                 res.send('fail');
             } else {
-                res.send('success');
+                const updateRequest = `UPDATE Profile SET CP = '${req.body.fromEmail}'
+                    WHERE email = '${req.body.sendTo}'`;
+                request.query(updateRequest, function (err, response) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    if (response.rowsAffected[0] === 0) {
+                        res.send('fail');
+                    } else {
+                        res.send('success');
+                    }
+                });
             }
         });
     });
