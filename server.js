@@ -334,14 +334,26 @@ app.post('/message/add', (req, res) => {
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `INSERT INTO Message (sendTo, isGlobal, data, type, fromEmail, status) VALUES (
-            '${sendTo}', '${isGlobal}', '${data}', '${type}', '${fromEmail}', '${status}')`;
-        request.query(stringRequest, (err, response) => {
+        const checkExist = `SELECT sendTo, fromEmail from Message where sendTo = '${sendTo}' and fromEmail = '${fromEmail}`;
+        request.query(checkExist, (err, response) => {
             if(err) {
                 console.log(err);
                 res.send('fail');
             } else {
-                res.send('success');
+                if (response.rowsAffected[0] === 0) {
+                    const stringRequest = `INSERT INTO Message (sendTo, isGlobal, data, type, fromEmail, status) VALUES (
+                        '${sendTo}', '${isGlobal}', '${data}', '${type}', '${fromEmail}', '${status}')`;
+                    request.query(stringRequest, (err, response) => {
+                        if(err) {
+                            console.log(err);
+                            res.send('fail');
+                        } else {
+                            res.send('success');
+                        }
+                    });
+                } else {
+                    res.send(`can't send duplicated invitations`);
+                }  
             }
         });
     });
