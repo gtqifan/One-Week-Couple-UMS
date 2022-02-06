@@ -188,6 +188,7 @@ app.post('/profile/add', (req, res) => {
     const topMatches = req.body.topMatches;
     const CP = req.body.CP;
     const email = req.body.email;
+    const token = req.body.token;
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
@@ -201,11 +202,11 @@ app.post('/profile/add', (req, res) => {
                 const stringRequest = `INSERT INTO Profile (image, name, gender, birthday, height, weight, 
                 location, school, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
                 CP_gender, CP_age_min, CP_age_max, CP_height_min,
-                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, CP, email) VALUES (
+                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, CP, email, token) VALUES (
                 '${image}', '${name}', '${gender}', '${birthday}', '${height}', '${weight}', '${location}', 
                 '${school}', '${grade}', '${major}', '${personality}', '${hobby}', '${wechatID}', '${hobbyDescription}','${selfDescription}', 
                 '${CP_gender}', '${CP_age_min}', '${CP_age_max}', '${CP_height_min}', '${CP_height_max}', '${CP_weight_min}',
-                 '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${CP}', '${email}')`;
+                 '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${CP}', '${email}', '${token}')`;
                 console.log(stringRequest);
                 request.query(stringRequest, (err, response) => {
                     if (err) {
@@ -467,3 +468,66 @@ app.post('/message/invitation/reject', (req, res) => {
         });
     });
 });
+
+// Task section
+
+// RESTful API interface for retrieving all tasks on the server.
+// TODO: remove this function because this is only for testing
+app.get('/task', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        request.query('SELECT * FROM Task', (err, recordset) => {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset));
+        });
+    });
+});
+
+// RESTful API interface for creating a task entry for two users..
+app.post('/task/add/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.email1}', 
+                '${req.body.email2}')`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+                res.send('fail');
+            }
+            res.send('success');
+        });
+    });
+});
+
+// RESTful API interface for retrieving one user's tasks info with the unique email.
+app.post('/task/allTask/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT * FROM Task WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+        });
+    });
+});
+
+// RESTful API interface for updating a task status to complete.
+app.post('/task/complete/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `UPDATE Task SET T${req.body.taskIndex}_status = 1, T${req.body.taskIndex}_content = ${req.body.content}
+            WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+                res.send('fail');
+            }
+            res.send('success');
+        });
+    });
+});
+
