@@ -405,7 +405,7 @@ app.post('/message/allInvitation/', (req, res) => {
 });
 
 //RESTful API interface for accepting invitation
-app.get('/message/Invitaion/Accept', (req, res) => {
+app.post('/message/Invitaion/Accept', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `UPDATE Message SET status = 1
@@ -424,7 +424,7 @@ app.get('/message/Invitaion/Accept', (req, res) => {
 });
 
 //RESTful API interface for rejecting invitation
-app.get('/message/Invitaion/Reject', (req, res) => {
+app.post('/message/Invitaion/Reject', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `UPDATE Message SET status = 2
