@@ -186,7 +186,6 @@ app.post('/profile/add', (req, res) => {
     const CP_hobby = req.body.CP_hobby;
     const CP_personality = req.body.CP_personality;
     const topMatches = req.body.topMatches;
-    const CP = req.body.CP;
     const email = req.body.email;
     const token = req.body.token;
 
@@ -202,11 +201,11 @@ app.post('/profile/add', (req, res) => {
                 const stringRequest = `INSERT INTO Profile (image, name, gender, birthday, height, weight, 
                 location, school, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
                 CP_gender, CP_age_min, CP_age_max, CP_height_min,
-                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, CP, email, token) VALUES (
+                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, email, token) VALUES (
                 '${image}', '${name}', '${gender}', '${birthday}', '${height}', '${weight}', '${location}', 
                 '${school}', '${grade}', '${major}', '${personality}', '${hobby}', '${wechatID}', '${hobbyDescription}','${selfDescription}', 
                 '${CP_gender}', '${CP_age_min}', '${CP_age_max}', '${CP_height_min}', '${CP_height_max}', '${CP_weight_min}',
-                 '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${CP}', '${email}', '${token}')`;
+                 '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${email}', '${token}')`;
                 console.log(stringRequest);
                 request.query(stringRequest, (err, response) => {
                     if (err) {
@@ -419,8 +418,8 @@ app.post('/message/invitation/accept', (req, res) => {
             if(response.rowsAffected[0] === 0) {
                 res.send('fail');
             } else {
-                const updateRequest = `UPDATE Profile SET CP = '${req.body.fromEmail}'
-                    WHERE email = '${req.body.sendTo}'`;
+                const updateRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.fromEmail}',
+                    '${req.body.toEmail}'`;
                 request.query(updateRequest, function (err, response) {
                     if (err) {
                         console.log(err);
