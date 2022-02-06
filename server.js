@@ -463,3 +463,18 @@ app.post('/message/invitation/reject', (req, res) => {
         });
     });
 });
+
+// Task section
+// RESTful API interface for retrieving all tasks on the server.
+// TODO: remove this function because this is only for testing
+app.get('/task', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        request.query('SELECT * FROM Task', (err, recordset) => {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset));
+        });
+    });
+});
