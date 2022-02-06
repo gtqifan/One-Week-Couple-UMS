@@ -405,7 +405,7 @@ app.post('/message/allInvitation/', (req, res) => {
 });
 
 //RESTful API interface for accepting invitation
-app.post('/message/Invitaion/Accept', (req, res) => {
+app.post('/message/invitation/accept', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `UPDATE Message SET status = 1
@@ -435,7 +435,22 @@ app.post('/message/Invitaion/Accept', (req, res) => {
 });
 
 //RESTful API interface for rejecting invitation
-app.post('/message/Invitaion/Reject', (req, res) => {
+app.post('/message/invitation/reject', (req, res) => {
+    // sql.connect(sqlConfig, () => {
+    //     const request = new sql.Request();
+    //     const stringRequest = `UPDATE Message SET status = 2
+    //         where sendTo = '${req.body.sendTo}' and fromEmail = '${req.body.fromEmail}'`;
+    //     request.query(stringRequest, function (err, response) {
+    //         if (err) {
+    //             console.log(err);
+    //         }
+    //         if(response.rowsAffected[0] === 0) {
+    //             res.send('fail');
+    //         } else {
+    //             res.send('success');
+    //         }
+    //     });
+    // });
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `UPDATE Message SET status = 2
@@ -447,7 +462,18 @@ app.post('/message/Invitaion/Reject', (req, res) => {
             if(response.rowsAffected[0] === 0) {
                 res.send('fail');
             } else {
-                res.send('success');
+                const updateRequest = `INSERT INTO Message (sendTo, isGlobal, data, type) VALUES (
+            '${req.body.fromEmail}', '0', '您的邀请被${req.body.sendTo}拒绝了', '${1}')`;
+                request.query(updateRequest, function (err, response) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    if (response.rowsAffected[0] === 0) {
+                        res.send('fail');
+                    } else {
+                        res.send('success');
+                    }
+                });
             }
         });
     });
