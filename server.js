@@ -463,3 +463,15 @@ app.post('/task/count/', (req, res) => {
     });
 });
 
+function tokenToEmail(tokenString) {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT email FROM Token WHERE token = '${tokenString}'`;
+        request.query(stringRequest, (err, res) => {
+            if(err) {
+                console.log(err);
+            }
+            return res.recordset;
+        })
+    })
+}
