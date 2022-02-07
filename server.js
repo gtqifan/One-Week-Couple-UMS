@@ -352,7 +352,7 @@ app.post('/message/add', (req, res) => {
                         }
                     });
                 } else {
-                    res.send(`can't send duplicated invitations`);
+                    res.send('can\'t send duplicated invitations');
                 }  
             }
         });
