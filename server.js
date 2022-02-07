@@ -49,18 +49,27 @@ app.post('/profile/add', (req, res) => {
             if(response.rowsAffected[0] === 0) {
                 const stringRequest = `INSERT INTO Profile (image, name, gender, birthday, height, weight, 
                 location, school, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
-                CP_gender, CP_age_min, CP_age_max, CP_height_min,
-                CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, email, token) VALUES (
-                '${req.body.image}', '${req.body.name}', '${req.body.gender}', '${req.body.birthday}', '${req.body.height}', '${req.body.weight}', '${req.body.location}', 
-                '${req.body.school}', '${req.body.grade}', '${req.body.major}', '${req.body.personality}', '${req.body.hobby}', '${req.body.wechatID}', '${req.body.hobbyDescription}','${req.body.selfDescription}', 
-                '${req.body.CP_gender}', '${req.body.CP_age_min}', '${req.body.CP_age_max}', '${req.body.CP_height_min}', '${req.body.CP_height_max}', '${req.body.CP_weight_min}',
-                 '${req.body.CP_weight_max}', '${req.body.CP_hobby}', '${req.body.CP_personality}', '${req.body.topMatches}', '${req.body.email}', '${req.body.token}')`;
-                console.log(stringRequest);
+                CP_gender, CP_age_min, CP_age_max, CP_height_min, CP_height_max, CP_weight_min, CP_weight_max, 
+                CP_hobby, CP_personality, topMatches, email) VALUES (
+                '${req.body.image}', '${req.body.name}', '${req.body.gender}', '${req.body.birthday}', 
+                '${req.body.height}', '${req.body.weight}', '${req.body.location}', '${req.body.school}', 
+                '${req.body.grade}', '${req.body.major}', '${req.body.personality}', '${req.body.hobby}', 
+                '${req.body.wechatID}', '${req.body.hobbyDescription}','${req.body.selfDescription}', 
+                '${req.body.CP_gender}', '${req.body.CP_age_min}', '${req.body.CP_age_max}', 
+                '${req.body.CP_height_min}', '${req.body.CP_height_max}', '${req.body.CP_weight_min}',
+                '${req.body.CP_weight_max}', '${req.body.CP_hobby}', '${req.body.CP_personality}', 
+                '${req.body.topMatches}', '${req.body.email}')`;
                 request.query(stringRequest, (err, response) => {
                     if (err) {
                         console.log(err);
                         res.send('fail');
                     } else {
+                        const tokenRequest = `INSERT INTO Token (email, token) VALUES ('${req.body.email}', '${req.body.token}')`;
+                        request.query(tokenRequest, (err, response) => {
+                            if(err) {
+                                console.log(err);
+                            }
+                        });
                         res.send('success'); // return success if the new user is added to the database
                     }
                 });
@@ -162,8 +171,7 @@ app.get('/profile/update', (req, res) => {
 app.post('/profile/secretGetTokenMethod/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `SELECT token FROM 
-                (SELECT * FROM Profile WHERE email = '${req.body.email}') AS result`;
+        const stringRequest = `SELECT token FROM Token WHERE email = '${req.body.email}'`;
         request.query(stringRequest, function (err, recordset) {
             if (err) {
                 console.log(err);
