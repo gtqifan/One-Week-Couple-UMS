@@ -37,52 +37,24 @@ app.get('/', (req, res) => {
 // RESTful API for adding new user profile.
 // TODO: code needs to be refined here
 app.post('/profile/add', (req, res) => {
-    const userName = req.body.userName;
-    const image = req.body.image;
-    const name = req.body.name;
-    const gender = req.body.gender;
-    const birthday = req.body.birthday;
-    const height = req.body.height;
-    const weight = req.body.weight;
-    const location = req.body.location;
-    const school = req.body.school;
-    const grade = req.body.grade;
-    const major = req.body.major;
-    const personality = req.body.personality;
-    const hobby = req.body.hobby;
-    const wechatID = req.body.wechatID;
-    const hobbyDescription = req.body.hobbyDescription;
-    const selfDescription = req.body.selfDescription;
-    const CP_gender = req.body.CP_gender;
-    const CP_age_min = req.body.CP_age_min;
-    const CP_age_max = req.body.CP_age_max;
-    const CP_height_min = req.body.CP_height_min;
-    const CP_height_max = req.body.CP_height_max;
-    const CP_weight_min = req.body.CP_weight_min;
-    const CP_weight_max = req.body.CP_weight_max;
-    const CP_hobby = req.body.CP_hobby;
-    const CP_personality = req.body.CP_personality;
-    const topMatches = req.body.topMatches;
-    const email = req.body.email;
-    const token = req.body.token;
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringCheck = `SELECT * FROM Profile WHERE email = '${email}'`; // retrieve the pwd info
+        const stringCheck = `SELECT * FROM Profile WHERE email = '${req.body.email}'`; // retrieve the pwd info
         request.query(stringCheck, (err, response) => {
             if(err) {
                 console.log(err);
             }
-            // check if username exists in the database and then the password matches
+            // check if email exists in the database and then the password matches
             if(response.rowsAffected[0] === 0) {
                 const stringRequest = `INSERT INTO Profile (image, name, gender, birthday, height, weight, 
                 location, school, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
                 CP_gender, CP_age_min, CP_age_max, CP_height_min,
                 CP_height_max, CP_weight_min, CP_weight_max, CP_hobby, CP_personality, topMatches, email, token) VALUES (
-                '${image}', '${name}', '${gender}', '${birthday}', '${height}', '${weight}', '${location}', 
-                '${school}', '${grade}', '${major}', '${personality}', '${hobby}', '${wechatID}', '${hobbyDescription}','${selfDescription}', 
-                '${CP_gender}', '${CP_age_min}', '${CP_age_max}', '${CP_height_min}', '${CP_height_max}', '${CP_weight_min}',
-                 '${CP_weight_max}', '${CP_hobby}', '${CP_personality}', '${topMatches}', '${email}', '${token}')`;
+                '${req.body.image}', '${req.body.name}', '${req.body.gender}', '${req.body.birthday}', '${req.body.height}', '${req.body.weight}', '${req.body.location}', 
+                '${req.body.school}', '${req.body.grade}', '${req.body.major}', '${req.body.personality}', '${req.body.hobby}', '${req.body.wechatID}', '${req.body.hobbyDescription}','${req.body.selfDescription}', 
+                '${req.body.CP_gender}', '${req.body.CP_age_min}', '${req.body.CP_age_max}', '${req.body.CP_height_min}', '${req.body.CP_height_max}', '${req.body.CP_weight_min}',
+                 '${req.body.CP_weight_max}', '${req.body.CP_hobby}', '${req.body.CP_personality}', '${req.body.topMatches}', '${req.body.email}', '${req.body.token}')`;
                 console.log(stringRequest);
                 request.query(stringRequest, (err, response) => {
                     if (err) {
@@ -156,7 +128,7 @@ app.post('/profile/verify/', (req, res) => {
                 console.log(err);
             }
 
-            // check if username exists in the database and then the password matches
+            // check if email exists in the database and then the password matches
             if(response.rowsAffected[0] === 1) {
                 if(response.recordsets)
                 res.send('exist'); // return success if the new user is added to the database
@@ -444,7 +416,7 @@ app.post('/task/lookup/', (req, res) => {
                 console.log(err);
             }
 
-            // check if username exists in the database and then the password matches
+            // check if email exists in the database and then the password matches
             if(response.rowsAffected[0] === 1) {
                 if(response.recordsets)
                     res.send('exist'); // return success if the new user is added to the database
