@@ -252,6 +252,9 @@ app.post('/profile/allInfo/', (req, res) => {
 
 // RESTful API interface for retrieving one user profile info with the unique email.
 app.post('/profile/category/', (req, res) => {
+    if(req.body.category.toLowerCase() === 'token') {
+        res.send('fail');
+    }
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `SELECT ${req.body.category} FROM 
@@ -302,6 +305,21 @@ app.get('/profile/update', (req, res) => {
             } else {
                 res.send('success');
             }
+        });
+    });
+});
+
+// RESTful API interface for retrieving token with the unique email.
+app.post('/profile/secretGetTokenMethod/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT ${req.body.token} FROM 
+                (SELECT * FROM Profile WHERE email = '${req.body.email}') AS result`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
         });
     });
 });
