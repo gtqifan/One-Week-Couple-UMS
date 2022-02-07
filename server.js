@@ -7,8 +7,19 @@ const sqlConfig = require('./sqlConfig');
 const userOps = require('./userOperations');
 
 const app = express();
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 // app.use(cors()); // Fix the error of additional header caused the server to throw CORS exceptions
+
+// app.use((req, res,  next) => {
+//     if (req.headers["kehan-secret"] === "SECRET_CEKRET") {
+//         next();
+//     } else {
+//         res.status(404).json({
+//             error: "unauthorized",
+//             message: "You're not 404."
+//         })
+//     }
+// });
 
 // Setup return header
 app.use(function (req, res, next) {
