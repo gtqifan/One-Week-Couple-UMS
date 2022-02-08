@@ -5,6 +5,7 @@ const sql = require('mssql');
 // const cors = require('cors');
 const sqlConfig = require('./sqlConfig');
 const userOps = require('./userOperations');
+const {parse} = require("mssql/lib/connectionstring");
 
 const app = express();
 app.use(bodyParser.json());
@@ -385,6 +386,7 @@ app.post('/task/add/', (req, res) => {
         const request = new sql.Request();
         const stringRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.email1}', 
                 '${req.body.email2}')`;
+        // TODO: add check duplicate function
         request.query(stringRequest, function (err, recordset) {
             if (err) {
                 console.log(err);
@@ -413,15 +415,36 @@ app.post('/task/allTask/', (req, res) => {
 app.post('/task/complete/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `UPDATE Task SET T${req.body.taskIndex}_status = 1, T${req.body.taskIndex}_content = ${req.body.content}
-            WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
-        request.query(stringRequest, function (err, recordset) {
-            if (err) {
-                console.log(err);
-                res.send('fail');
+        let stringRequest;
+        setTimeout(function() {
+            if(parseInt(req.body.taskIndex) === 1 || parseInt(req.body.taskIndex) === 7) {
+                const indexRequest = `SELECT CP1_email FROM Task WHERE CP1_email = '${req.body.email}'`;
+                request.query(indexRequest, (err, res) => {
+                    if(err) {
+                        console.log(err);
+                    }
+                    if(res.rowsAffected[0] === 1) {
+                        stringRequest = `UPDATE Task SET T${req.body.taskIndex}_status1 = 1, T${req.body.taskIndex}_content1 = '${req.body.content}' 
+                            WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
+                    } else {
+                        stringRequest = `UPDATE Task SET T${req.body.taskIndex}_status2 = 1, T${req.body.taskIndex}_content2 = '${req.body.content}' 
+                            WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
+                    }
+                });
+            } else {
+                stringRequest = `UPDATE Task SET T${req.body.taskIndex}_status = 1 
+                    WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
             }
-            res.send('success');
-        });
+        }, 0);
+        setTimeout(function() {
+            request.query(stringRequest, function (err, recordset) {
+                if (err) {
+                    console.log(err);
+                    res.send('fail');
+                }
+                res.send('success');
+            });
+        }, 200);
     });
 });
 
