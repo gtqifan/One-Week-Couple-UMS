@@ -284,8 +284,8 @@ app.post('/message/allInvitation/', (req, res) => {
             // We need to return image, gender, grade, major, hobby, personality
             let profileSet = new Set();
             resultSet.forEach(email => {
-                const emailRequest = `SELECT name, image, gender, grade, major, hobby, personality, email FROM Profile
-                    WHERE email = '${email}'`;
+                const emailRequest = `SELECT name, image, gender, grade, major, hobby, personality, email, selfDescription 
+                    FROM Profile WHERE email = '${email}'`;
                 request.query(emailRequest, function (err, recordset) {
                     if (err) {
                         console.log(err);
@@ -494,6 +494,24 @@ app.post('/task/lookup/', (req, res) => {
             } else {
                 res.send('not-exist');
             }
+        });
+    });
+});
+
+app.get('/task/getAllPairedEmail/', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = `SELECT * FROM Task`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+            }
+            const resultSet = new Set();
+            recordset.recordset.forEach(element => {
+                resultSet.add(element.CP1_email);
+                resultSet.add(element.CP2_email);
+            });
+            res.send(Array.from(resultSet));
         });
     });
 });
