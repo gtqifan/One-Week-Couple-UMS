@@ -86,7 +86,25 @@ app.post('/profile/add', (req, res) => {
                     }
                 });
             } else {
-                res.send('fail');
+                const updateRequest = `UPDATE Profile SET image = '${req.body.image}', name = '${req.body.name}', 
+                gender = '${req.body.gender}', birthday = '${req.body.birthday}', height = '${req.body.height}', 
+                weight = '${req.body.weight}', location = '${req.body.location}', school = '${req.body.school}',
+                grade = '${req.body.grade}', major = '${req.body.major}', personality = '${req.body.personality}', 
+                hobby = '${req.body.hobby}', wechatID = '${req.body.wechatID}', hobbyDescription = '${req.body.hobbyDescription}', 
+                selfDescription = '${req.body.selfDescription}', CP_gender = '${req.body.CP_gender}', 
+                CP_age_min = '${req.body.CP_age_min}', CP_age_max = '${req.body.CP_age_max}', 
+                CP_height_min = '${req.body.CP_height_min}', CP_height_max = '${req.body.CP_height_max}', 
+                CP_weight_min = '${req.body.CP_weight_min}',CP_weight_max = '${req.body.CP_weight_max}', 
+                CP_hobby = '${req.body.CP_hobby}', CP_personality = '${req.body.CP_personality}', 
+                topMatches = '${req.body.topMatches}' WHERE email = '${req.body.email}'`;
+                request.query(updateRequest, (err, response) => {
+                    if (err) {
+                        console.log(err);
+                        res.send('fail');
+                    } else {
+                        res.send('success'); // return success if the new user is added to the database
+                    }
+                });
             }
         });
     });
@@ -239,7 +257,7 @@ app.post('/message/add', (req, res) => {
                         }
                     });
                 } else {
-                    res.send('can\'t send duplicated invitations');
+                    res.send('The user has been paired');
                 }
             }
         });
@@ -317,16 +335,27 @@ app.post('/message/invitation/accept', (req, res) => {
             if(response.rowsAffected[0] === 0) {
                 res.send('fail');
             } else {
-                const updateRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.fromEmail}',
-                    '${req.body.sendTo}')`;
-                request.query(updateRequest, function (err, response) {
-                    if (err) {
+                const checkRequest = `SELECT * FROM Task WHERE CP1_email = '${req.body.fromEmail}' OR CP2_email = '${req.body.fromEmail}'
+                    OR CP1_email = '${req.body.sendTo}' OR CP2_email = '${req.body.sendTo}'`;
+                request.query(checkRequest, function (err, response2) {
+                    if(err) {
                         console.log(err);
                     }
-                    if (response.rowsAffected[0] === 0) {
-                        res.send('fail');
+                    if(!response2.rowsAffected[0] === 0) {
+                        res.send('The user has already paired');
                     } else {
-                        res.send('success');
+                        const updateRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.fromEmail}',
+                            '${req.body.sendTo}')`;
+                        request.query(updateRequest, function (err, response) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            if (response.rowsAffected[0] === 0) {
+                                res.send('fail');
+                            } else {
+                                res.send('success');
+                            }
+                        });
                     }
                 });
             }
@@ -411,32 +440,13 @@ app.post('/task/add/', (req, res) => {
 app.post('/task/allTask/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        let stringRequest;
-        setTimeout(function() {
-            const indexRequest = `SELECT CP1_email FROM Task WHERE CP1_email = '${req.body.email}'`;
-            request.query(indexRequest, (err, res) => {
-                if(err) {
-                    console.log(err);
-                }
-                if(res.rowsAffected[0] === 1) {
-                    stringRequest = `SELECT CP1_email, T1_status1 AS T1_status, T1_content1 AS T1_content, T2_status, 
-                        T3_status, T4_status, T5_status, T6_status, T7_status1 AS T7_status, T7_content1 AS T7_content 
-                        FROM Task WHERE CP1_email = '${req.body.email}'`;
-                } else {
-                    stringRequest = `SELECT CP2_email, T1_status2 AS T1_status, T1_content2 AS T1_content, T2_status, 
-                        T3_status, T4_status, T5_status, T6_status, T7_status2 AS T7_status, T7_content2 AS T7_content 
-                        FROM Task WHERE CP2_email = '${req.body.email}'`;
-                }
-            });
-        }, 0);
-        setTimeout(function() {
-            request.query(stringRequest, function (err, recordset) {
-                if (err) {
-                    console.log(err);
-                }
-                res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
-            });
-        }, 200);
+        const stringRequest = `SELECT * FROM Task WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
+        request.query(stringRequest, function (err, recordset) {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+        });
     });
 });
 
