@@ -384,15 +384,25 @@ app.get('/task', (req, res) => {
 app.post('/task/add/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.email1}', 
-                '${req.body.email2}')`;
-        // TODO: add check duplicate function
-        request.query(stringRequest, function (err, recordset) {
-            if (err) {
+        const stringCheck = `SELECT * FROM Task WHERE CP1_email = '${req.body.CP1_email}' OR CP2_email = '${req.body.CP2_email}'
+                OR CP1_email = '${req.body.CP2_email}' OR CP2_email = '${req.body.CP1_email}'`;
+        request.query(stringCheck, (err, response) => {
+            if(err) {
                 console.log(err);
-                res.send('fail');
             }
-            res.send('success');
+            if(response.rowsAffected[0] === 0) {
+                const stringRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.email1}', 
+                '${req.body.email2}')`;
+                request.query(stringRequest, function (err, recordset) {
+                    if (err) {
+                        console.log(err);
+                        res.send('fail');
+                    }
+                    res.send('success');
+                });
+            } else {
+                res.send('User already paired');
+            }
         });
     });
 });
@@ -401,13 +411,32 @@ app.post('/task/add/', (req, res) => {
 app.post('/task/allTask/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `SELECT * FROM Task WHERE CP1_email = '${req.body.email}' OR CP2_email = '${req.body.email}'`;
-        request.query(stringRequest, function (err, recordset) {
-            if (err) {
-                console.log(err);
-            }
-            res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
-        });
+        let stringRequest;
+        setTimeout(function() {
+            const indexRequest = `SELECT CP1_email FROM Task WHERE CP1_email = '${req.body.email}'`;
+            request.query(indexRequest, (err, res) => {
+                if(err) {
+                    console.log(err);
+                }
+                if(res.rowsAffected[0] === 1) {
+                    stringRequest = `SELECT CP1_email, T1_status1 AS T1_status, T1_content1 AS T1_content, T2_status, 
+                        T3_status, T4_status, T5_status, T6_status, T7_status1 AS T7_status, T7_content1 AS T7_content 
+                        FROM Task WHERE CP1_email = '${req.body.email}'`;
+                } else {
+                    stringRequest = `SELECT CP2_email, T1_status2 AS T1_status, T1_content2 AS T1_content, T2_status, 
+                        T3_status, T4_status, T5_status, T6_status, T7_status2 AS T7_status, T7_content2 AS T7_content 
+                        FROM Task WHERE CP2_email = '${req.body.email}'`;
+                }
+            });
+        }, 0);
+        setTimeout(function() {
+            request.query(stringRequest, function (err, recordset) {
+                if (err) {
+                    console.log(err);
+                }
+                res.send(JSON.stringify(recordset.recordset)); // Result in JSON format
+            });
+        }, 200);
     });
 });
 
@@ -473,16 +502,25 @@ app.post('/task/lookup/', (req, res) => {
 app.post('/task/count/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `SELECT * FROM Task WHERE T${req.body.taskIndex}_status = 1`;
-        request.query(stringRequest, function (err, response) {
-            if (err) {
-                console.log(err);
-                res.send('fail');
+        let stringRequest;
+        setTimeout(function() {
+            if(parseInt(req.body.taskIndex) === 1 || parseInt(req.body.taskIndex) === 7){
+                stringRequest = `SELECT * FROM Task WHERE T${req.body.taskIndex}_status1 = 1`;
+            } else {
+                stringRequest = `SELECT * FROM Task WHERE T${req.body.taskIndex}_status = 1`;
             }
+        }, 0);
+        setTimeout(function() {
+            request.query(stringRequest, function (err, response) {
+                if (err) {
+                    console.log(err);
+                    res.send('fail');
+                }
 
-            // return the number of pairs that completed a specific tasks
-            res.send(response.rowsAffected[0]);
-        });
+                // return the number of pairs that completed a specific tasks
+                res.send(response.rowsAffected[0]);
+            });
+        }, 200);
     });
 });
 
