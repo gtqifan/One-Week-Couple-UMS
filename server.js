@@ -239,7 +239,7 @@ app.post('/message/add', (req, res) => {
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const checkExist = `SELECT sendTo, fromEmail from Message where sendTo = '${sendTo}' and fromEmail = '${fromEmail}'`;
+        const checkExist = `SELECT * from Task where CP1_email = '${sendTo}' OR CP2_email = '${sendTo}'`;
         request.query(checkExist, (err, response) => {
             if(err) {
                 console.log(err);
@@ -257,7 +257,7 @@ app.post('/message/add', (req, res) => {
                         }
                     });
                 } else {
-                    res.send('The user has been paired');
+                    res.send('对方已经配对了哦');
                 }
             }
         });
@@ -343,7 +343,7 @@ app.post('/message/invitation/accept', (req, res) => {
                     }
                     console.log(response2);
                     if(response2.rowsAffected[0] === 1) {
-                        res.send('The user has already paired');
+                        res.send('对方已经配对了喔');
                     } else {
                         const updateRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.fromEmail}',
                             '${req.body.sendTo}')`;
