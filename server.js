@@ -341,7 +341,8 @@ app.post('/message/invitation/accept', (req, res) => {
                     if(err) {
                         console.log(err);
                     }
-                    if(!response2.rowsAffected[0] === 0) {
+                    console.log(response2);
+                    if(response2.rowsAffected[0] === 1) {
                         res.send('The user has already paired');
                     } else {
                         const updateRequest = `INSERT INTO Task (CP1_email, CP2_email) VALUES ('${req.body.fromEmail}',
