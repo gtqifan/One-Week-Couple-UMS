@@ -161,7 +161,7 @@ app.post('/profile/verify/', (req, res) => {
 });
 
 // RESTful API interface for updating one category of a user's profile.
-app.get('/profile/update', (req, res) => {
+app.post('/profile/update', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `UPDATE Profile SET ${req.body.category} = '${req.body.value}'
@@ -534,9 +534,8 @@ app.post('/task/count/', (req, res) => {
                     console.log(err);
                     res.send('fail');
                 }
-
                 // return the number of pairs that completed a specific tasks
-                res.send(response.rowsAffected[0]);
+                res.send(`{"count":${response.rowsAffected[0]}}`);
             });
         }, 200);
     });
