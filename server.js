@@ -162,7 +162,6 @@ app.post('/profile/verify/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `SELECT * FROM Profile WHERE email = '${req.body.email}'`;
-        console.log(stringRequest);
         request.query(stringRequest, function (err, response) {
             if (err) {
                 console.log(err);
@@ -331,7 +330,6 @@ app.post('/message/invitation/accept', (req, res) => {
         const request = new sql.Request();
         const stringRequest = `UPDATE Message SET status = 1
             where sendTo = '${req.body.sendTo}' and fromEmail = '${req.body.fromEmail}'`;
-        console.log('STRING' + stringRequest);
         request.query(stringRequest, function (err, response) {
             if (err) {
                 console.log(err);
@@ -341,7 +339,6 @@ app.post('/message/invitation/accept', (req, res) => {
             } else {
                 const checkRequest = `SELECT * FROM Task WHERE CP1_email = '${req.body.fromEmail}' OR CP2_email = '${req.body.fromEmail}'
                     OR CP1_email = '${req.body.sendTo}' OR CP2_email = '${req.body.sendTo}'`;
-                console.log('CHECK' + checkRequest);
                 request.query(checkRequest, function (err, response2) {
                     if(err) {
                         console.log(err);
