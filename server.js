@@ -76,6 +76,7 @@ app.post('/profile/add', (req, res) => {
                         console.log(err);
                         res.send('fail');
                     }
+                    res.send('success');
                     // } else {
                     //     const tokenRequest = `INSERT INTO Token (email, token) VALUES ('${req.body.email}', '${req.body.token}')`;
                     //     request.query(tokenRequest, (err, response) => {
