@@ -553,6 +553,19 @@ app.post('/task/count/', (req, res) => {
     });
 });
 
+app.get('/kehanWang/methodToClearEverything/beCareful', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        const stringRequest = 'DELETE FROM Profile; DELETE FROM Message; DELETE FROM Task';
+        request.query(stringRequest, (err, response) => {
+            if(err) {
+                console.log(err);
+            }
+            res.send('Everything has been deleted (but not profile pictures)');
+        })
+    })
+});
+
 function tokenToEmail(tokenString) {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
