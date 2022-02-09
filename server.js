@@ -298,7 +298,7 @@ app.post('/message/allInvitation/', (req, res) => {
                 resultSet.add(element['fromEmail']);
             });
             if(resultSet.size === 0) {
-                res.send('No invitation');
+                res.send([]);
             }
 
             // Retrieve profile information from Profile table where the email addresses are in the resultArray
@@ -331,6 +331,7 @@ app.post('/message/invitation/accept', (req, res) => {
         const request = new sql.Request();
         const stringRequest = `UPDATE Message SET status = 1
             where sendTo = '${req.body.sendTo}' and fromEmail = '${req.body.fromEmail}'`;
+        console.log('STRING' + stringRequest);
         request.query(stringRequest, function (err, response) {
             if (err) {
                 console.log(err);
@@ -340,6 +341,7 @@ app.post('/message/invitation/accept', (req, res) => {
             } else {
                 const checkRequest = `SELECT * FROM Task WHERE CP1_email = '${req.body.fromEmail}' OR CP2_email = '${req.body.fromEmail}'
                     OR CP1_email = '${req.body.sendTo}' OR CP2_email = '${req.body.sendTo}'`;
+                console.log('CHECK' + checkRequest);
                 request.query(checkRequest, function (err, response2) {
                     if(err) {
                         console.log(err);
