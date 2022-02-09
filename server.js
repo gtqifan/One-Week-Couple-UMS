@@ -60,11 +60,11 @@ app.post('/profile/add', (req, res) => {
             // check if email exists in the database and then the password matches
             if(response.rowsAffected[0] === 0) {
                 const stringRequest = `INSERT INTO Profile (image, name, gender, birthday, height, weight, 
-                location, school, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
+                location, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
                 CP_gender, CP_age_min, CP_age_max, CP_height_min, CP_height_max, CP_weight_min, CP_weight_max, 
                 CP_hobby, CP_personality, topMatches, email) VALUES (
                 '${req.body.image}', '${req.body.name}', '${req.body.gender}', '${req.body.birthday}', 
-                '${req.body.height}', '${req.body.weight}', '${req.body.location}', '${req.body.school}', 
+                '${req.body.height}', '${req.body.weight}', '${req.body.location}',  
                 '${req.body.grade}', '${req.body.major}', '${req.body.personality}', '${req.body.hobby}', 
                 '${req.body.wechatID}', '${req.body.hobbyDescription}','${req.body.selfDescription}', 
                 '${req.body.CP_gender}', '${req.body.CP_age_min}', '${req.body.CP_age_max}', 
@@ -88,7 +88,7 @@ app.post('/profile/add', (req, res) => {
             } else {
                 const updateRequest = `UPDATE Profile SET image = '${req.body.image}', name = '${req.body.name}', 
                 gender = '${req.body.gender}', birthday = '${req.body.birthday}', height = '${req.body.height}', 
-                weight = '${req.body.weight}', location = '${req.body.location}', school = '${req.body.school}',
+                weight = '${req.body.weight}', location = '${req.body.location}',      
                 grade = '${req.body.grade}', major = '${req.body.major}', personality = '${req.body.personality}', 
                 hobby = '${req.body.hobby}', wechatID = '${req.body.wechatID}', hobbyDescription = '${req.body.hobbyDescription}', 
                 selfDescription = '${req.body.selfDescription}', CP_gender = '${req.body.CP_gender}', 
@@ -162,6 +162,7 @@ app.post('/profile/verify/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
         const stringRequest = `SELECT * FROM Profile WHERE email = '${req.body.email}'`;
+        console.log(stringRequest);
         request.query(stringRequest, function (err, response) {
             if (err) {
                 console.log(err);
@@ -169,7 +170,6 @@ app.post('/profile/verify/', (req, res) => {
 
             // check if email exists in the database and then the password matches
             if(response.rowsAffected[0] === 1) {
-                if(response.recordsets)
                 res.send('exist'); // return success if the new user is added to the database
             } else {
                 res.send('not-exist');
@@ -297,13 +297,16 @@ app.post('/message/allInvitation/', (req, res) => {
             recordset.recordset.forEach(element => {
                 resultSet.add(element['fromEmail']);
             });
+            if(resultSet.size === 0) {
+                res.send('No invitation');
+            }
 
             // Retrieve profile information from Profile table where the email addresses are in the resultArray
             // We need to return image, gender, grade, major, hobby, personality
             let profileSet = new Set();
             resultSet.forEach(email => {
-                const emailRequest = `SELECT name, image, gender, grade, major, hobby, personality, email, selfDescription 
-                    FROM Profile WHERE email = '${email}'`;
+                const emailRequest = `SELECT name, image, gender, grade, major, hobby, personality, email, 
+                    selfDescription, location FROM Profile WHERE email = '${email}'`;
                 request.query(emailRequest, function (err, recordset) {
                     if (err) {
                         console.log(err);
@@ -341,7 +344,6 @@ app.post('/message/invitation/accept', (req, res) => {
                     if(err) {
                         console.log(err);
                     }
-                    console.log(response2);
                     if(response2.rowsAffected[0] === 1) {
                         res.send('对方已经配对了喔');
                     } else {
