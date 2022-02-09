@@ -62,7 +62,7 @@ app.post('/profile/add', (req, res) => {
                 const stringRequest = `INSERT INTO Profile (image, name, gender, birthday, height, weight, 
                 location, grade, major, personality, hobby, wechatID, hobbyDescription, selfDescription, 
                 CP_gender, CP_age_min, CP_age_max, CP_height_min, CP_height_max, CP_weight_min, CP_weight_max, 
-                CP_hobby, CP_personality, topMatches, email) VALUES (
+                CP_hobby, CP_personality, topMatches, email, realEmail) VALUES (
                 '${req.body.image}', '${req.body.name}', '${req.body.gender}', '${req.body.birthday}', 
                 '${req.body.height}', '${req.body.weight}', '${req.body.location}',  
                 '${req.body.grade}', '${req.body.major}', '${req.body.personality}', '${req.body.hobby}', 
@@ -70,20 +70,21 @@ app.post('/profile/add', (req, res) => {
                 '${req.body.CP_gender}', '${req.body.CP_age_min}', '${req.body.CP_age_max}', 
                 '${req.body.CP_height_min}', '${req.body.CP_height_max}', '${req.body.CP_weight_min}',
                 '${req.body.CP_weight_max}', '${req.body.CP_hobby}', '${req.body.CP_personality}', 
-                '${req.body.topMatches}', '${req.body.email}')`;
+                '${req.body.topMatches}', '${req.body.email}', '${req.body.realEmail}')`;
                 request.query(stringRequest, (err, response) => {
                     if (err) {
                         console.log(err);
                         res.send('fail');
-                    } else {
-                        const tokenRequest = `INSERT INTO Token (email, token) VALUES ('${req.body.email}', '${req.body.token}')`;
-                        request.query(tokenRequest, (err, response) => {
-                            if(err) {
-                                console.log(err);
-                            }
-                        });
-                        res.send('success'); // return success if the new user is added to the database
                     }
+                    // } else {
+                    //     const tokenRequest = `INSERT INTO Token (email, token) VALUES ('${req.body.email}', '${req.body.token}')`;
+                    //     request.query(tokenRequest, (err, response) => {
+                    //         if(err) {
+                    //             console.log(err);
+                    //         }
+                    //     });
+                    //     res.send('success'); // return success if the new user is added to the database
+                    // }
                 });
             } else {
                 const updateRequest = `UPDATE Profile SET image = '${req.body.image}', name = '${req.body.name}', 
