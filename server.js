@@ -52,7 +52,7 @@ app.post('/profile/add', (req, res) => {
 
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringCheck = `SELECT * FROM Profile WHERE email = '${req.body.email}'`; // retrieve the pwd info
+        const stringCheck = `SELECT * FROM Profile WHERE realEmail = '${req.body.realEmail}'`; // retrieve the pwd info
         request.query(stringCheck, (err, response) => {
             if(err) {
                 console.log(err);
@@ -163,7 +163,7 @@ app.post('/profile/category/', (req, res) => {
 app.post('/profile/verify/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `SELECT * FROM Profile WHERE email = '${req.body.email}'`;
+        const stringRequest = `SELECT * FROM Profile WHERE realEmail = '${req.body.realEmail}'`;
         request.query(stringRequest, function (err, response) {
             if (err) {
                 console.log(err);
