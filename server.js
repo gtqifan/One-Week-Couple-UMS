@@ -202,7 +202,7 @@ app.post('/profile/update', (req, res) => {
 app.post('/profile/secretGetTokenMethod/', (req, res) => {
     sql.connect(sqlConfig, () => {
         const request = new sql.Request();
-        const stringRequest = `SELECT email FROM Token WHERE realEmail = '${req.body.realEmail}'`;
+        const stringRequest = `SELECT email FROM Profile WHERE realEmail = '${req.body.realEmail}'`;
         request.query(stringRequest, function (err, recordset) {
             if (err) {
                 console.log(err);
