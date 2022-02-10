@@ -380,18 +380,30 @@ app.post('/message/invitation/reject', (req, res) => {
             if(response.rowsAffected[0] === 0) {
                 res.send('fail');
             } else {
-                const updateRequest = `INSERT INTO Message (sendTo, isGlobal, data, type) VALUES (
-            '${req.body.fromEmail}', '0', '您的邀请被${req.body.sendTo}拒绝了', '${1}')`;
-                request.query(updateRequest, function (err, response) {
+                const nameRequest = `SELECT name from Profile where email = '${req.body.sendTo}'`;
+                request.query(nameRequest, function (err, recordset) {
                     if (err) {
                         console.log(err);
                     }
-                    if (response.rowsAffected[0] === 0) {
+                    if(response.rowsAffected[0] === 0) {
                         res.send('fail');
                     } else {
-                        res.send('success');
+                        //console.log(recordset);
+                        const name = recordset.recordset[0]["name"];
+                        const updateRequest = `INSERT INTO Message (sendTo, isGlobal, data, type) VALUES (
+                            '${req.body.fromEmail}', '0', '您的邀请被${name}拒绝了', '${1}')`;
+                        request.query(updateRequest, function (err, response) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            if (response.rowsAffected[0] === 0) {
+                                res.send('fail');
+                            } else {
+                                res.send('success');
+                            }
+                        });
                     }
-                });
+                }); 
             }
         });
     });
