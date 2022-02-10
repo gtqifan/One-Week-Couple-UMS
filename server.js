@@ -307,7 +307,7 @@ app.post('/message/allInvitation/', (req, res) => {
             let profileSet = new Set();
             resultSet.forEach(email => {
                 const emailRequest = `SELECT name, image, gender, grade, major, hobby, personality, email, 
-                    selfDescription, location FROM Profile WHERE email = '${email}'`;
+                    selfDescription, location, hobbyDescription FROM Profile WHERE email = '${email}'`;
                 request.query(emailRequest, function (err, recordset) {
                     if (err) {
                         console.log(err);
