@@ -126,6 +126,34 @@ app.post('/profile/add', (req, res) => {
 //     });
 // });
 
+// RESTful API interface for retrieving all user profile on the server.
+// TODO: remove this function because this is only for testing
+app.post('/profile', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        request.query('SELECT * FROM Profile', (err, recordset) => {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset));
+        });
+    });
+});
+
+// RESTful API interface for retrieving all user profile on the server.
+// TODO: remove this function because this is only for testing
+app.get('/kehanwang/secretGetMethod/getAllProfile', (req, res) => {
+    sql.connect(sqlConfig, () => {
+        const request = new sql.Request();
+        request.query('SELECT * FROM Profile', (err, recordset) => {
+            if (err) {
+                console.log(err);
+            }
+            res.send(JSON.stringify(recordset.recordset));
+        });
+    });
+});
+
 // RESTful API interface for retrieving one user profile info with the unique email.
 app.post('/profile/allInfo/', (req, res) => {
     sql.connect(sqlConfig, () => {
