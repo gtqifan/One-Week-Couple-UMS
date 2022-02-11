@@ -112,19 +112,19 @@ app.post('/profile/add', (req, res) => {
     });
 });
 
-// RESTful API interface for retrieving all user profile on the server.
-// TODO: remove this function because this is only for testing
-app.get('/profile', (req, res) => {
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        request.query('SELECT * FROM Profile', (err, recordset) => {
-            if (err) {
-                console.log(err);
-            }
-            res.send(JSON.stringify(recordset.recordset));
-        });
-    });
-});
+// // RESTful API interface for retrieving all user profile on the server.
+// // TODO: remove this function because this is only for testing
+// app.get('/profile', (req, res) => {
+//     sql.connect(sqlConfig, () => {
+//         const request = new sql.Request();
+//         request.query('SELECT * FROM Profile', (err, recordset) => {
+//             if (err) {
+//                 console.log(err);
+//             }
+//             res.send(JSON.stringify(recordset.recordset));
+//         });
+//     });
+// });
 
 // RESTful API interface for retrieving one user profile info with the unique email.
 app.post('/profile/allInfo/', (req, res) => {
@@ -214,19 +214,19 @@ app.post('/profile/secretGetTokenMethod/', (req, res) => {
 
 // Below are the methods for message table.
 
-// RESTful API interface for retrieving all message on the server.
-// TODO: remove this function because this is only for testing
-app.get('/message', (req, res) => {
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        request.query('SELECT * FROM Message', (err, recordset) => {
-            if (err) {
-                console.log(err);
-            }
-            res.send(JSON.stringify(recordset.recordset));
-        });
-    });
-});
+// // RESTful API interface for retrieving all message on the server.
+// // TODO: remove this function because this is only for testing
+// app.get('/message', (req, res) => {
+//     sql.connect(sqlConfig, () => {
+//         const request = new sql.Request();
+//         request.query('SELECT * FROM Message', (err, recordset) => {
+//             if (err) {
+//                 console.log(err);
+//             }
+//             res.send(JSON.stringify(recordset.recordset));
+//         });
+//     });
+// });
 
 // This section is for message operations
 // RESTful API for adding new message profile.
@@ -411,19 +411,19 @@ app.post('/message/invitation/reject', (req, res) => {
 
 // Task section
 
-// RESTful API interface for retrieving all tasks on the server.
-// TODO: remove this function because this is only for testing
-app.get('/task', (req, res) => {
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        request.query('SELECT * FROM Task', (err, recordset) => {
-            if (err) {
-                console.log(err);
-            }
-            res.send(JSON.stringify(recordset.recordset));
-        });
-    });
-});
+// // RESTful API interface for retrieving all tasks on the server.
+// // TODO: remove this function because this is only for testing
+// app.get('/task', (req, res) => {
+//     sql.connect(sqlConfig, () => {
+//         const request = new sql.Request();
+//         request.query('SELECT * FROM Task', (err, recordset) => {
+//             if (err) {
+//                 console.log(err);
+//             }
+//             res.send(JSON.stringify(recordset.recordset));
+//         });
+//     });
+// });
 
 // RESTful API interface for creating a task entry for two users..
 app.post('/task/add/', (req, res) => {
@@ -567,18 +567,18 @@ app.post('/task/count/', (req, res) => {
     });
 });
 
-app.get('/kehanWang/methodToClearEverything/beCareful', (req, res) => {
-    sql.connect(sqlConfig, () => {
-        const request = new sql.Request();
-        const stringRequest = 'DELETE FROM Profile; DELETE FROM Message; DELETE FROM Task';
-        request.query(stringRequest, (err, response) => {
-            if(err) {
-                console.log(err);
-            }
-            res.send('Everything has been deleted (but not profile pictures)');
-        })
-    })
-});
+// app.get('/kehanWang/methodToClearEverything/beCareful', (req, res) => {
+//     sql.connect(sqlConfig, () => {
+//         const request = new sql.Request();
+//         const stringRequest = 'DELETE FROM Profile; DELETE FROM Message; DELETE FROM Task';
+//         request.query(stringRequest, (err, response) => {
+//             if(err) {
+//                 console.log(err);
+//             }
+//             res.send('Everything has been deleted (but not profile pictures)');
+//         })
+//     })
+// });
 
 function tokenToEmail(tokenString) {
     sql.connect(sqlConfig, () => {
